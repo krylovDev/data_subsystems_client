@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import 'antd/dist/antd.css';
 import { Form, Input, Button } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { BASE_API_URL, METHOD_POST } from "../utils/constants";
 
 const Demo = () => {
 	const [form] = Form.useForm();
@@ -14,8 +15,8 @@ const Demo = () => {
 	
 	const onFinish = (values) => {
 		setIsFetching(true)
-		fetch("http://localhost:5000", {
-			method: 'post',
+		fetch(BASE_API_URL, {
+			method: METHOD_POST,
 			headers: {
 				"Content-Type": "application/json"
 			},
