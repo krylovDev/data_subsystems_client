@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react';
 import 'antd/dist/antd.css';
 import { Form, Input, Button } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { BASE_API_URL, METHOD_POST } from "../utils/constants";
+import api from '../utils/Api.js'
 
 const Demo = () => {
 	const [form] = Form.useForm();
 	const [, forceUpdate] = useState({});
-	const [isFetching,setIsFetching] = useState(false)
+	const [isFetching, setIsFetching] = useState(false)
 	
 	useEffect(() => {
 		forceUpdate({});
@@ -15,19 +15,10 @@ const Demo = () => {
 	
 	const onFinish = (values) => {
 		setIsFetching(true)
-		fetch(BASE_API_URL, {
-			method: METHOD_POST,
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify(values)
-		})
-			.then((res) => res.json())
-			.then((res) => {
-				setIsFetching(false)
-				console.log("Успешно:", JSON.stringify(res))
-			})
+		api.addCreditCard(values)
+			.then((res) => console.log("Успешно:", JSON.stringify(res)))
 			.catch((error) => console.error("Ошибка:", error));
+		setIsFetching(false)
 		form.resetFields()
 	};
 	
@@ -126,7 +117,7 @@ const Demo = () => {
 							!!form.getFieldsError().filter(({errors}) => errors.length).length
 						}
 					>
-						{isFetching ? "Загрузка" : "Оплатить" }
+						{ isFetching ? "Загрузка" : "Оплатить" }
 					</Button>
 				) }
 			</Form.Item>
