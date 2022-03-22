@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import 'antd/dist/antd.css';
 import { Form, Input, Button, DatePicker } from 'antd';
-import {  LockOutlined, CreditCardOutlined, DollarOutlined } from '@ant-design/icons';
+import { LockOutlined, CreditCardOutlined, DollarOutlined } from '@ant-design/icons';
 import api from '../utils/Api.js'
+import handleAmount from "../utils/helpers/handleAmount";
+import handleDate from "../utils/helpers/handleDate";
 
 const Demo = () => {
 	const [form] = Form.useForm();
@@ -13,14 +15,15 @@ const Demo = () => {
 	useEffect(() => {
 		forceUpdate({});
 	}, []);
-	
-	const handleDate = (date) => {
-		return date.format("DD/MM/YYYY").slice(-7)
-	}
-	
-	const onFinish = ({ExpDate, ...values}) => {
+
+	const onFinish = ({ExpDate, Amount, ...values}) => {
 		setIsFetching(true)
-		api.addCreditCard({ExpDate: handleDate(ExpDate), ...values})
+		api.addCreditCard({
+				ExpDate: handleDate(ExpDate),
+				Amount: handleAmount(Amount),
+				...values
+			}
+		)
 			.then((res) => console.log("Успешно:", JSON.stringify(res)))
 			.catch((error) => console.error("Ошибка:", error));
 		setIsFetching(false)
