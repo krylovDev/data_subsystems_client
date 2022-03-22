@@ -1,25 +1,30 @@
 import { useState, useEffect } from 'react';
 import 'antd/dist/antd.css';
-import { Form, Input, Button } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { Form, Input, Button, DatePicker } from 'antd';
+import {  LockOutlined, CreditCardOutlined, DollarOutlined } from '@ant-design/icons';
 import api from '../utils/Api.js'
 
 const Demo = () => {
 	const [form] = Form.useForm();
 	const [, forceUpdate] = useState({});
 	const [isFetching, setIsFetching] = useState(false)
+	const monthFormat = 'MM/YYYY';
 	
 	useEffect(() => {
 		forceUpdate({});
 	}, []);
 	
-	const onFinish = (values) => {
+	const handleDate = (date) => {
+		return date.format("DD/MM/YYYY").slice(-7)
+	}
+	
+	const onFinish = ({ExpDate, ...values}) => {
 		setIsFetching(true)
-		api.addCreditCard(values)
+		api.addCreditCard({ExpDate: handleDate(ExpDate), ...values})
 			.then((res) => console.log("Успешно:", JSON.stringify(res)))
 			.catch((error) => console.error("Ошибка:", error));
 		setIsFetching(false)
-		form.resetFields()
+		// form.resetFields()
 	};
 	
 	return (
@@ -43,9 +48,10 @@ const Demo = () => {
 			>
 				<Input
 					placeholder="Card Number"
-					prefix={ <UserOutlined className="site-form-item-icon"/> }
+					prefix={ <CreditCardOutlined className="site-form-item-icon"/> }
 				/>
 			</Form.Item>
+			
 			
 			<Form.Item
 				label="Expiration Date"
@@ -55,17 +61,14 @@ const Demo = () => {
 					{
 						required: true,
 						message: 'Введите дату'
-					}, {
-						pattern: new RegExp("^(0[1-9]|10|11|12)/20[2-9]{2}$"),
-						message: 'Введите дату в формате MM/YYYY',
-					}
+					},
 				] }
 			>
-				<Input
-					placeholder="12/2025"
-					prefix={ <UserOutlined className="site-form-item-icon"/> }
-				/>
+				<DatePicker
+					format={ monthFormat }
+					picker="month"/>
 			</Form.Item>
+			
 			
 			<Form.Item
 				label="CVV"
@@ -103,7 +106,7 @@ const Demo = () => {
 			>
 				<Input
 					placeholder="100"
-					prefix={ <UserOutlined className="site-form-item-icon"/> }
+					prefix={ <DollarOutlined className="site-form-item-icon"/> }
 				/>
 			</Form.Item>
 			
